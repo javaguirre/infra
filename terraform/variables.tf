@@ -6,6 +6,11 @@ variable "region" {
   default = "eu-west-1"
 }
 
+variable "prestashop_key_name" {
+  default = "javaguirre-tnp"
+  description = "The first machines we deployed had an specific key pair we maintain now"
+}
+
 variable "key_name" {
   default = "javaguirre-tnp"
 }
@@ -16,10 +21,6 @@ variable "aws_access_key" {
 
 variable "aws_secret_key" {
   default = ""
-}
-
-variable "instance" {
-  default = "t2.micro"
 }
 
 variable "instance_count" {
