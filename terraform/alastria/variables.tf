@@ -20,6 +20,6 @@ variable "alastria_instance_size" {
   default = "t2.medium"
 }
 
-variable "alastria_key_name" {
-  default = "alastria_tnp_bootnode"
+variable "key_name" {
+  default = ""
 }
