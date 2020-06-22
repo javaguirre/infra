@@ -6,6 +6,7 @@ resource "aws_instance" "regular_besu_node_one" {
   vpc_security_group_ids = [
     aws_security_group.web.id,
     aws_security_group.ssh.id,
+    aws_security_group.besu.id,
     aws_security_group.egress-tls.id,
     aws_security_group.ping-ICMP.id
   ]
@@ -69,6 +70,25 @@ resource "aws_security_group" "web" {
   ingress {
     from_port   = 443
     to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "besu" {
+  name        = "default-besu-ports"
+  description = "Security group for besu"
+
+  ingress {
+    from_port   = 30303
+    to_port     = 30303
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8545
+    to_port     = 8545
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
