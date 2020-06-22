@@ -1,3 +1,26 @@
+resource "aws_instance" "regular_besu_node_one" {
+  ami           = "ami-0d359437d1756caa8"  # Ubuntu 18.04
+  instance_type = var.ec2_size
+  key_name      = var.prestashop_key_name
+
+  vpc_security_group_ids = [
+    aws_security_group.web.id,
+    aws_security_group.ssh.id,
+    aws_security_group.egress-tls.id,
+    aws_security_group.ping-ICMP.id
+  ]
+
+  ebs_block_device {
+    device_name = "/dev/sdg"
+    volume_type = "standard"
+    volume_size = 80
+  }
+
+  tags = {
+    Name = "regular-besu-one"
+  }
+}
+
 resource "aws_instance" "prestashop_staging" {
   ami           = var.ami
   instance_type = var.ec2_size
