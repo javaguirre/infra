@@ -36,6 +36,10 @@ variable "ami" {
   default = "ami-04c58523038d79132"  # Ubuntu 18.04
 }
 
+variable "wordpress_ami" {
+  default = "ami-056a9fde404bd4d82"
+}
+
 variable "ec2_size" {
   default = "t2.medium"
 }

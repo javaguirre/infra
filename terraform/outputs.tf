@@ -13,3 +13,7 @@ output "proimplant-wordpress" {
 output "regular-node-besu-one" {
   value = "ssh ${aws_instance.regular_besu_node_one.public_ip}:22"
 }
+
+output "locker-wordpress" {
+  value = "A record: ${aws_instance.locker_wordpress.public_dns}"
+}
