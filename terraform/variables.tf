@@ -37,7 +37,7 @@ variable "ami" {
 }
 
 variable "wordpress_ami" {
-  default = "ami-056a9fde404bd4d82"
+  default = "ami-0eabb053fd6dcde27"
 }
 
 variable "ec2_size" {
