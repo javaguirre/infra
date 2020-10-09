@@ -27,7 +27,6 @@ variable "instance_count" {
   default = "1"
 }
 
-
 variable "ansible_user" {
   default = "ubuntu"
 }

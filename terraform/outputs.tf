@@ -1,3 +1,11 @@
+output "alastria-hyperledger" {
+  value = "ssh ${aws_instance.alastria_hyperledger.public_dns}:22"
+}
+
+output "alastria-hyperledger-public-ip" {
+  value = "PUBLIC IP: ${aws_eip.alastria_hyperledger_ip.public_ip}"
+}
+
 output "prestashop-staging" {
   value = "ssh ${aws_instance.prestashop_staging.public_ip}:22"
 }
