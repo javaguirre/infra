@@ -3,16 +3,16 @@ variable "profile" {
 }
 
 variable "region" {
-  default = "eu-west-1"
+  default = "eu-central-1"
 }
 
 variable "prestashop_key_name" {
-  default = "javaguirre-tnp"
+  default = "prestashop-tnp"
   description = "The first machines we deployed had an specific key pair we maintain now"
 }
 
 variable "key_name" {
-  default = "javaguirre-tnp"
+  default = "terraform-tnp"
 }
 
 variable "aws_access_key" {
@@ -32,7 +32,7 @@ variable "ansible_user" {
 }
 
 variable "ami" {
-  default = "ami-04c58523038d79132"  # Ubuntu 18.04
+  default = "ami-04b15ea61eae36f54"
 }
 
 variable "wordpress_ami" {
