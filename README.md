@@ -1,6 +1,6 @@
-# INFRASTRUCTURE TNP
+# INFRASTRUCTURE WEALIZE
 
-Welcome welcome! This is the AWS (and others maybe) infrastructure repository for TNP.
+Welcome welcome! This is the AWS (and others maybe) infrastructure repository for Wealize.
 
 ## Installation and Configuration
 
