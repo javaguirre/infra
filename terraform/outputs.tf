@@ -26,6 +26,6 @@ output "locker-wordpress" {
   value = "A record: ${aws_instance.locker_wordpress.public_dns}"
 }
 
-output "clevernet-vpc" {
-  value = "VPC ID: ${aws_vpc.main.id}"
+output "clevernet-eip" {
+  value = "PUBLIC IP: ${aws_eip.clevernet_vpn_eip.public_ip}"
 }
