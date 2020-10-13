@@ -25,3 +25,7 @@ output "regular-node-besu-one" {
 output "locker-wordpress" {
   value = "A record: ${aws_instance.locker_wordpress.public_dns}"
 }
+
+output "clevernet-vpc" {
+  value = "VPC ID: ${aws_vpc.main.id}"
+}

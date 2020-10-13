@@ -13,6 +13,12 @@ resource "aws_instance" "alastria_hyperledger" {
     aws_security_group.egress-tls.id,
   ]
 
+  ebs_block_device {
+    device_name = "/dev/sdg"
+    volume_type = "standard"
+    volume_size = 100
+  }
+
   tags = {
     Name = "alastria-hyperledger"
   }
