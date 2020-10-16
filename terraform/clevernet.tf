@@ -15,6 +15,13 @@ resource "aws_security_group" "clevernet_vpn" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    from_port   = 20000
+    to_port     = 20003
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_security_group" "ssh_paris" {
