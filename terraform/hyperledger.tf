@@ -11,6 +11,7 @@ resource "aws_instance" "alastria_hyperledger" {
   vpc_security_group_ids = [
     aws_security_group.ssh.id,
     aws_security_group.egress-tls.id,
+    aws_security_group.hyperledger_node.id,
   ]
 
   ebs_block_device {
@@ -21,5 +22,25 @@ resource "aws_instance" "alastria_hyperledger" {
 
   tags = {
     Name = "alastria-hyperledger"
+  }
+}
+
+
+resource "aws_security_group" "hyperledger_node" {
+  name        = "hyperledger node"
+  description = ""
+
+  ingress {
+    from_port   = 7051
+    to_port     = 7051
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 7077
+    to_port     = 7077
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
