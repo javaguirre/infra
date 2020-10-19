@@ -28,7 +28,7 @@ resource "aws_instance" "alastria_hyperledger" {
 
 resource "aws_security_group" "hyperledger_node" {
   name        = "hyperledger node"
-  description = ""
+  description = "Hyperledger node ports"
 
   ingress {
     from_port   = 7051

@@ -1,3 +1,8 @@
+resource "aws_eip" "regular_besu_node_one" {
+  instance = aws_instance.regular_besu_node_one.id
+  vpc      = true
+}
+
 resource "aws_instance" "regular_besu_node_one" {
   ami           = "ami-0d359437d1756caa8"  # Ubuntu 18.04
   instance_type = var.ec2_size

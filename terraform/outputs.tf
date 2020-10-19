@@ -22,6 +22,10 @@ output "regular-node-besu-one" {
   value = "ssh ${aws_instance.regular_besu_node_one.public_ip}:22"
 }
 
+output "regular-node-besu-one-eip" {
+  value = "PUBLIC IP: ${aws_eip.regular_besu_node_one.public_ip}"
+}
+
 output "locker-wordpress" {
   value = "A record: ${aws_instance.locker_wordpress.public_dns}"
 }
