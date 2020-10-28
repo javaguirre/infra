@@ -1,6 +1,6 @@
 # INFRASTRUCTURE WEALIZE
 
-Welcome welcome! This is the AWS (and others maybe) infrastructure repository for Wealize.
+Welcome welcome! This is the AWS (and others maybe) infrastructure repository for generic services @ Wealize.
 
 ## Installation and Configuration
 
