@@ -14,3 +14,7 @@ resource "aws_instance" "proimplant_wordpress" {
     Name = "proimplant-wordpress"
   }
 }
+
+output "proimplant-wordpress" {
+  value = "ssh ${aws_instance.proimplant_wordpress.public_ip}:22"
+}

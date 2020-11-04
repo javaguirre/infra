@@ -36,3 +36,7 @@ resource "aws_security_group" "ftp" {
     ipv6_cidr_blocks = ["::/0"]
   }
 }
+
+output "locker-wordpress" {
+  value = "A record: ${aws_instance.locker_wordpress.public_dns}"
+}

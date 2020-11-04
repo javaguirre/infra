@@ -44,3 +44,11 @@ resource "aws_security_group" "hyperledger_node" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+output "alastria-hyperledger" {
+  value = "ssh ${aws_instance.alastria_hyperledger.public_dns}:22"
+}
+
+output "alastria-hyperledger-public-ip" {
+  value = "PUBLIC IP: ${aws_eip.alastria_hyperledger_ip.public_ip}"
+}

@@ -1,66 +1,3 @@
-resource "aws_eip" "regular_besu_node_one" {
-  instance = aws_instance.regular_besu_node_one.id
-  vpc      = true
-}
-
-resource "aws_instance" "regular_besu_node_one" {
-  ami           = "ami-0d359437d1756caa8"  # Ubuntu 18.04
-  instance_type = var.ec2_size
-  key_name      = var.prestashop_key_name
-
-  vpc_security_group_ids = [
-    aws_security_group.web.id,
-    aws_security_group.ssh.id,
-    aws_security_group.besu.id,
-    aws_security_group.egress-tls.id,
-    aws_security_group.ping-ICMP.id
-  ]
-
-  ebs_block_device {
-    device_name = "/dev/sdg"
-    volume_type = "standard"
-    volume_size = 80
-  }
-
-  tags = {
-    Name = "regular-besu-one"
-  }
-}
-
-resource "aws_instance" "prestashop_staging" {
-  ami           = var.ami
-  instance_type = var.ec2_size
-  key_name      = var.prestashop_key_name
-
-  vpc_security_group_ids = [
-    aws_security_group.web.id,
-    aws_security_group.ssh.id,
-    aws_security_group.egress-tls.id,
-    aws_security_group.ping-ICMP.id
-  ]
-
-  tags = {
-    Name = "prestashop-staging"
-  }
-}
-
-resource "aws_instance" "prestashop_production" {
-  ami           = var.ami
-  instance_type = var.ec2_size
-  key_name      = var.prestashop_key_name
-
-  vpc_security_group_ids = [
-    aws_security_group.web.id,
-    aws_security_group.ssh.id,
-    aws_security_group.egress-tls.id,
-    aws_security_group.ping-ICMP.id
-  ]
-
-  tags = {
-    Name = "prestashop-production"
-  }
-}
-
 resource "aws_security_group" "web" {
   name        = "default-web-prestashop"
   description = "Security group for web that allows web traffic from internet"
@@ -75,25 +12,6 @@ resource "aws_security_group" "web" {
   ingress {
     from_port   = 443
     to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "besu" {
-  name        = "default-besu-ports"
-  description = "Security group for besu"
-
-  ingress {
-    from_port   = 30303
-    to_port     = 30303
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8545
-    to_port     = 8545
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

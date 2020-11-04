@@ -67,3 +67,7 @@ resource "aws_instance" "clevernet_vpn" {
     Name = "clevernet-vpn"
   }
 }
+
+output "clevernet-eip" {
+  value = "PUBLIC IP: ${aws_eip.clevernet_vpn_eip.public_ip}"
+}
