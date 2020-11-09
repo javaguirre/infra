@@ -54,7 +54,7 @@ resource "aws_db_instance" "locker_wp_db" {
   storage_type         = "gp2"
   engine               = "mysql"
   engine_version       = "8.0"
-  instance_class       = "db.t2.medium"
+  instance_class       = "db.t2.micro"
   name                 = var.locker_wp_db_name
   username             = var.locker_wp_db_username
   password             = var.locker_wp_db_password
@@ -68,4 +68,31 @@ output "locker-wordpress" {
 
 output "locker-wp-db" {
   value = "mysql://${aws_db_instance.locker_wp_db.username}:${aws_db_instance.locker_wp_db.password}@${aws_db_instance.locker_wp_db.endpoint}/${aws_db_instance.locker_wp_db.name}"
+}
+
+resource "aws_ecr_repository" "ecr_locker_wordpress" {
+  name                 = "locker-wordpress"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "ecr_locker_frontend_nginx" {
+  name                 = "locker-frontend-nginx"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "ecr_locker_frontend" {
+  name                 = "locker-frontend"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
