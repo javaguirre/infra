@@ -79,15 +79,6 @@ resource "aws_ecr_repository" "ecr_locker_wordpress" {
   }
 }
 
-resource "aws_ecr_repository" "ecr_locker_frontend_nginx" {
-  name                 = "locker-frontend-nginx"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
 resource "aws_ecr_repository" "ecr_locker_frontend" {
   name                 = "locker-frontend"
   image_tag_mutability = "MUTABLE"
@@ -95,4 +86,51 @@ resource "aws_ecr_repository" "ecr_locker_frontend" {
   image_scanning_configuration {
     scan_on_push = true
   }
+}
+
+resource "aws_ecr_lifecycle_policy" "ecr_locker_wordpress" {
+  repository = aws_ecr_repository.ecr_locker_wordpress.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 20 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 20
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
+
+
+resource "aws_ecr_lifecycle_policy" "ecr_locker_frontend" {
+  repository = aws_ecr_repository.ecr_locker_frontend.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 20 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 20
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
 }
