@@ -41,13 +41,12 @@ resource "aws_db_instance" "locker_wp_db" {
 resource "aws_db_instance" "locker_backend_db" {
   allocated_storage    = 20
   storage_type         = "gp2"
-  engine               = "postgresql"
+  engine               = "postgres"
   engine_version       = "12.4"
   instance_class       = "db.t2.medium"
   name                 = var.locker_backend_db_name
   username             = var.locker_backend_db_username
   password             = var.locker_backend_db_password
-  parameter_group_name = "default.postgresql12.4"
   publicly_accessible  = true
 }
 
@@ -56,7 +55,7 @@ output "locker-wp-db" {
 }
 
 output "locker-backend-db" {
-  value = "mysql://${aws_db_instance.locker_backend_db.username}:${aws_db_instance.locker_backend_db.password}@${aws_db_instance.locker_backend_db.endpoint}/${aws_db_instance.locker_backend_db.name}"
+  value = "postgres://${aws_db_instance.locker_backend_db.username}:${aws_db_instance.locker_backend_db.password}@${aws_db_instance.locker_backend_db.endpoint}/${aws_db_instance.locker_backend_db.name}"
 }
 
 resource "aws_ecr_repository" "ecr_locker_wordpress" {
