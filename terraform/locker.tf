@@ -1,3 +1,6 @@
+# TODO ACMs
+# Eksctl is in another folder k8s
+
 variable "locker_wp_db_username" {
   default = ""
 }
@@ -10,43 +13,16 @@ variable "locker_wp_db_password" {
   default = ""
 }
 
-resource "aws_instance" "locker_wordpress" {
-  ami           = var.wordpress_ami
-  instance_type = var.ec2_size
-  key_name      = var.key_name
-
-  vpc_security_group_ids = [
-    aws_security_group.web.id,
-    aws_security_group.ssh.id,
-    aws_security_group.egress-tls.id,
-    aws_security_group.ftp.id,
-    aws_security_group.ping-ICMP.id
-  ]
-
-  tags = {
-    Name = "locker-wordpress"
-  }
+variable "locker_backend_db_name" {
+  default = ""
 }
 
-resource "aws_security_group" "ftp" {
-  name        = "ftp"
-  description = "FTP security group"
+variable "locker_backend_db_username" {
+  default = ""
+}
 
-  ingress {
-    from_port        = 21
-    to_port          = 21
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+variable "locker_backend_db_password" {
+  default = ""
 }
 
 resource "aws_db_instance" "locker_wp_db" {
@@ -62,12 +38,25 @@ resource "aws_db_instance" "locker_wp_db" {
   publicly_accessible  = true
 }
 
-output "locker-wordpress" {
-  value = "A record: ${aws_instance.locker_wordpress.public_dns}"
+resource "aws_db_instance" "locker_backend_db" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "postgresql"
+  engine_version       = "12.4"
+  instance_class       = "db.t2.medium"
+  name                 = var.locker_backend_db_name
+  username             = var.locker_backend_db_username
+  password             = var.locker_backend_db_password
+  parameter_group_name = "default.postgresql12.4"
+  publicly_accessible  = true
 }
 
 output "locker-wp-db" {
   value = "mysql://${aws_db_instance.locker_wp_db.username}:${aws_db_instance.locker_wp_db.password}@${aws_db_instance.locker_wp_db.endpoint}/${aws_db_instance.locker_wp_db.name}"
+}
+
+output "locker-backend-db" {
+  value = "mysql://${aws_db_instance.locker_backend_db.username}:${aws_db_instance.locker_backend_db.password}@${aws_db_instance.locker_backend_db.endpoint}/${aws_db_instance.locker_backend_db.name}"
 }
 
 resource "aws_ecr_repository" "ecr_locker_wordpress" {
@@ -81,6 +70,24 @@ resource "aws_ecr_repository" "ecr_locker_wordpress" {
 
 resource "aws_ecr_repository" "ecr_locker_frontend" {
   name                 = "locker-frontend"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "ecr_locker_admin" {
+  name                 = "locker-admin"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "ecr_locker_backend" {
+  name                 = "locker-backend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -114,6 +121,53 @@ EOF
 
 resource "aws_ecr_lifecycle_policy" "ecr_locker_frontend" {
   repository = aws_ecr_repository.ecr_locker_frontend.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 20 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 20
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
+
+
+resource "aws_ecr_lifecycle_policy" "ecr_locker_admin" {
+  repository = aws_ecr_repository.ecr_locker_admin.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 20 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 20
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_ecr_lifecycle_policy" "ecr_locker_backend" {
+  repository = aws_ecr_repository.ecr_locker_backend.name
 
   policy = <<EOF
 {
