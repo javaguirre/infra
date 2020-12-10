@@ -10,21 +10,21 @@ variable "coloqio_backend_db_password" {
   default = ""
 }
 
-resource "aws_db_instance" "coloqio_backend_db" {
-  allocated_storage    = 20
-  storage_type         = "gp2"
-  engine               = "postgres"
-  engine_version       = "12.4"
-  instance_class       = "db.t2.medium"
-  name                 = var.coloqio_backend_db_name
-  username             = var.coloqio_backend_db_username
-  password             = var.coloqio_backend_db_password
-  publicly_accessible  = true
-}
+# resource "aws_db_instance" "coloqio_backend_db" {
+#   allocated_storage    = 20
+#   storage_type         = "gp2"
+#   engine               = "postgres"
+#   engine_version       = "12.4"
+#   instance_class       = "db.t2.medium"
+#   name                 = var.coloqio_backend_db_name
+#   username             = var.coloqio_backend_db_username
+#   password             = var.coloqio_backend_db_password
+#   publicly_accessible  = true
+# }
 
-output "coloqio-backend-db" {
-  value = "postgres://${aws_db_instance.coloqio_backend_db.username}:${aws_db_instance.coloqio_backend_db.password}@${aws_db_instance.coloqio_backend_db.endpoint}/${aws_db_instance.coloqio_backend_db.name}"
-}
+# output "coloqio-backend-db" {
+#   value = "postgres://${aws_db_instance.coloqio_backend_db.username}:${aws_db_instance.coloqio_backend_db.password}@${aws_db_instance.coloqio_backend_db.endpoint}/${aws_db_instance.coloqio_backend_db.name}"
+# }
 
 resource "aws_ecr_repository" "coloqio_frontend" {
   name                 = "coloqio-frontend"
@@ -149,17 +149,4 @@ EOF
 
 output "coloqio-backend-ecr" {
   value = aws_ecr_repository.coloqio_backend.repository_url
-}
-
-resource "kubernetes_storage_class" "eks_storageclass_coloqio" {
-  metadata {
-    name = "coloqio-storageclass"
-  }
-  storage_provisioner = "kubernetes.io/aws-ebs"
-  reclaim_policy      = "Delete"
-  allowVolumeExpansion = true
-  parameters = {
-    type = "gp2"
-    encrypted = "true"
-  }
 }
