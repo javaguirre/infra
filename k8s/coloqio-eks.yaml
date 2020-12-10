@@ -3,7 +3,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: locker-cluster
+  name: coloqio-cluster
   region: eu-central-1
 
 nodeGroups:
@@ -12,7 +12,7 @@ nodeGroups:
     desiredCapacity: 1
 
 fargateProfiles:
-  - name: fp-locker
+  - name: fp-coloqio
     selectors:
       # All workloads in the "default" Kubernetes namespace will be
       # scheduled onto Fargate:
@@ -20,4 +20,7 @@ fargateProfiles:
       # All workloads in the "kube-system" Kubernetes namespace will be
       # scheduled onto Fargate:
       - namespace: kube-system
-      - namespace: locker
+
+      # Only the coloqio production workloads will be scheduled onto Fargate:
+      - namespace: coloqio-frontend-production
+      - namespace: coloqio-backend-production
