@@ -1,6 +1,6 @@
 resource "aws_instance" "proimplant_wordpress" {
-  ami           = "ami-06206646e9f976074"  # WordPress from Bitnami
-  instance_type = var.ec2_size
+  ami           = "ami-056de12816135f6a1"  # Proimplant WordPress
+  instance_type = "t3.medium"
   key_name      = var.key_name
 
   vpc_security_group_ids = [
@@ -9,6 +9,12 @@ resource "aws_instance" "proimplant_wordpress" {
     aws_security_group.egress-tls.id,
     aws_security_group.ping-ICMP.id
   ]
+
+  ebs_block_device {
+    device_name = "/dev/sdg"
+    volume_type = "standard"
+    volume_size = 80
+  }
 
   tags = {
     Name = "proimplant-wordpress"
