@@ -16,12 +16,6 @@ resource "aws_instance" "regular_besu_node_one" {
     aws_security_group.ping-ICMP.id
   ]
 
-  ebs_block_device {
-    device_name = "/dev/sdg"
-    volume_type = "standard"
-    volume_size = 80
-  }
-
   tags = {
     Name = "regular-besu-one"
   }
