@@ -42,3 +42,7 @@ variable "wordpress_ami" {
 variable "ec2_size" {
   default = "t2.medium"
 }
+
+variable "bsp_db_name" {}
+variable "bsp_db_username" {}
+variable "bsp_db_password" {}
