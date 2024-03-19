@@ -1,0 +1,84 @@
+backend:
+  service:
+    type: NodePort
+    port: 8000
+  container:
+    imagePullPolicy: "Always"
+    port: 8000
+  scaling:
+    maxReplicas: 10
+    minReplicas: 1
+    limits:
+      cpu: 800m
+      memory: 950Mi
+    requests:
+      cpu: 700m
+      memory: 850Mi
+
+celerybeat:
+  container:
+    imagePullPolicy: "Always"
+  scaling:
+    maxReplicas: 10
+    minReplicas: 1
+    limits:
+      cpu: 200m
+      memory: 600Mi
+    requests:
+      cpu: 100m
+      memory: 500Mi
+
+celery:
+  container:
+    imagePullPolicy: "Always"
+  scaling:
+    maxReplicas: 10
+    minReplicas: 1
+    limits:
+      cpu: 200m
+      memory: 850Mi
+    requests:
+      cpu: 100m
+      memory: 750Mi
+
+postgres:
+  service:
+    type: ClusterIP
+    port: 5432
+  container:
+    image: postgres:10
+    imagePullPolicy: "Always"
+    port: 5432
+    env:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "nluproxy"
+  storage:
+    capacity: 5Gi
+  scaling:
+    maxReplicas: 10
+    minReplicas: 1
+    limits:
+      cpu: 200m
+      memory: 400Mi
+    requests:
+      cpu: 100m
+      memory: 300Mi
+
+redis:
+  service:
+    type: ClusterIP
+    port: 6379
+  container:
+    image: redis:latest
+    imagePullPolicy: "Always"
+    port: 6379
+  scaling:
+    maxReplicas: 10
+    minReplicas: 1
+    limits:
+      cpu: 150m
+      memory: 200Mi
+    requests:
+      cpu: 50m
+      memory: 100Mi

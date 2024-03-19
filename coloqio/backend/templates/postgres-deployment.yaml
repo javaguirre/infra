@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+      stage: {{ .Values.backend.stage }}
+  template:
+    metadata:
+      labels:
+        app: postgres
+        stage: {{ .Values.backend.stage }}
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.container.image }}
+          imagePullPolicy: {{ .Values.postgres.container.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.postgres.container.port }}
+          resources:
+            limits:
+              cpu: {{ .Values.postgres.scaling.limits.cpu }}
+              memory: {{ .Values.postgres.scaling.limits.memory }}
+            requests:
+              cpu: {{ .Values.postgres.scaling.requests.cpu }}
+              memory: {{ .Values.postgres.scaling.requests.memory }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.postgres.container.port }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 3
+          env:
+            {{- range $key, $val := .Values.postgres.container.env}}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end}}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+              subPath: postgres
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+      restartPolicy: Always
+      serviceAccountName: ""

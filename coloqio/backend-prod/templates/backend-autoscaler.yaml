@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata: 
+  name: backend-scaler 
+spec: 
+  maxReplicas: {{ .Values.backend.scaling.maxReplicas }}
+  minReplicas: {{ .Values.backend.scaling.minReplicas }}
+  scaleTargetRef: 
+    apiVersion: apps/v1 
+    kind: Deployment
+    name: backend
+  metrics: 
+  - type: Resource
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource: 
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80

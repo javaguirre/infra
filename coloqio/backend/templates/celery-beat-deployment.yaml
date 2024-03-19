@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celerybeat
+  labels:
+    app: celerybeat
+spec:
+  selector:
+    matchLabels:
+      app: celerybeat
+      stage: {{ .Values.backend.stage }}
+  template:
+    metadata:
+      labels:
+        app: celerybeat
+        stage: {{ .Values.backend.stage }}
+    spec:
+      containers:
+        - name: celerybeat
+          image: {{ .Values.backend.container.image }}
+          imagePullPolicy: {{ .Values.celerybeat.container.imagePullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "touch /tmp/healthy; celery -A nluproxy beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler;"]
+          resources:
+            limits:
+              cpu: {{ .Values.celerybeat.scaling.limits.cpu }}
+              memory: {{ .Values.celerybeat.scaling.limits.memory }}
+            requests:
+              cpu: {{ .Values.celerybeat.scaling.requests.cpu }}
+              memory: {{ .Values.celerybeat.scaling.requests.memory }}
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy
+            initialDelaySeconds: 10
+            periodSeconds: 3
+          env:
+            {{- range $key, $val := .Values.backend.container.env}}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end}}
+      restartPolicy: Always
+      serviceAccountName: ""

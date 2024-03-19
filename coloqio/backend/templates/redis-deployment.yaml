@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      stage: {{ .Values.backend.stage }}
+  template:
+    metadata:
+      labels:
+        app: redis
+        stage: {{ .Values.backend.stage }}
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redis.container.image }}
+          imagePullPolicy: {{ .Values.redis.container.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.redis.container.port }}
+          resources:
+            limits:
+              cpu: {{ .Values.redis.scaling.limits.cpu }}
+              memory: {{ .Values.redis.scaling.limits.memory }}
+            requests:
+              cpu: {{ .Values.redis.scaling.requests.cpu }}
+              memory: {{ .Values.redis.scaling.requests.memory }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.redis.container.port }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 3
+      restartPolicy: Always
+      serviceAccountName: ""

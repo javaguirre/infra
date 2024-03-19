@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery
+  labels:
+    app: celery
+spec:
+  selector:
+    matchLabels:
+      app: celery
+      stage: {{ .Values.backend.stage }}
+  template:
+    metadata:
+      labels:
+        app: celery
+        stage: {{ .Values.backend.stage }}
+    spec:
+      containers:
+        - name: celery
+          image: {{ .Values.backend.container.image }}
+          imagePullPolicy: {{ .Values.celery.container.imagePullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "touch /tmp/healthy; celery -A nluproxy worker -l info -E;"]
+          resources:
+            limits:
+              cpu: {{ .Values.celery.scaling.limits.cpu }}
+              memory: {{ .Values.celery.scaling.limits.memory }}
+            requests:
+              cpu: {{ .Values.celery.scaling.requests.cpu }}
+              memory: {{ .Values.celery.scaling.requests.memory }}
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy
+            initialDelaySeconds: 10
+            periodSeconds: 3
+          env:
+            {{- range $key, $val := .Values.backend.container.env}}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end}}
+      restartPolicy: Always
+      serviceAccountName: ""

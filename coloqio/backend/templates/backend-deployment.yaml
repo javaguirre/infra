@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+      stage: {{ .Values.backend.stage }}
+  template:
+    metadata:
+      labels:
+        app: backend
+        stage: {{ .Values.backend.stage }}
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.container.image }}
+          imagePullPolicy: {{ .Values.backend.container.imagePullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "touch /tmp/healthy; ./entrypoint.sh --create_superuser;"]
+          ports:
+            - containerPort: {{ .Values.backend.container.port }}
+          resources:
+            limits:
+              cpu: {{ .Values.backend.scaling.limits.cpu }}
+              memory: {{ .Values.backend.scaling.limits.memory }}
+            requests:
+              cpu: {{ .Values.backend.scaling.requests.cpu }}
+              memory: {{ .Values.backend.scaling.requests.memory }}
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy
+            initialDelaySeconds: 10
+            periodSeconds: 3
+          env:
+            {{- range $key, $val := .Values.backend.container.env}}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end}}
+            - name: ALLOWED_HOSTS
+              value: {{ .Values.backend.ingress.host }}
+      restartPolicy: Always
+      serviceAccountName: ""

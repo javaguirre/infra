@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata: 
+  name: redis-scaler 
+spec: 
+  maxReplicas: {{ .Values.redis.scaling.maxReplicas }}
+  minReplicas: {{ .Values.redis.scaling.minReplicas }}
+  scaleTargetRef: 
+    apiVersion: apps/v1 
+    kind: Deployment
+    name: redis
+  metrics: 
+  - type: Resource
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource: 
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
